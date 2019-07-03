@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="Assets/bootstrap/css/bootstrap.min.css">
+    <style media="screen">
+
+      .room {
+        position: absolute;
+        left: 45px;
+        border:1px solid green;
+        padding:5px;
+        margin:20px;
+        z-index: -1;
+      }
+      .reservation {
+        position: relative;
+        height: 30px;
+        border:1px solid blue;
+        padding:5px;
+        margin: 4px;
+      }
+
+      .date {
+        position: absolute;
+        white-space: nowrap;
+        z-index: -1;
+      }
+
+      .num {
+        position: fixed;
+        text-align: right;
+        height: 150px;
+        width: 45px;
+        padding-right: 5px;
+        background-color: white;
+      }
+
+      .dropdown {
+
+      }
+
+      #title {
+
+      }
+
+      #month {
+        align-items: flex-end;
+      }
+
+      #year {
+        align-items: flex-end;
+      }
+
+    </style>
+
+    <title>MLC Dorm Reservation</title>
+
+  </head>
+  <body>
+
+    <ul class="nav fixed-top" style="">
+      <li class="nav-item">
+        <h1 class="nav-text" id="title">MLC Dorm Reservation Calendar</h1>
+      </li>
+      <li class="nav-item">
+        <h1 id="month">Month</h1>
+      </li>
+      <li class="nav-item">
+        <h1 id="year">Year</h1>
+      </li>
+      <li class="nav-item dropdown">
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" style="position: relative" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Pick Building
+          </button>
+          <div class="dropdown-menu" style="position: relative" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" id="AU">Augustana</a>
+            <a class="dropdown-item" id="CO">Concord</a>
+            <a class="dropdown-item" id="CE">Centennial</a>
+            <a class="dropdown-item" id="SU">Summit</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div id="date_box" style="padding:10px"></div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="Assets/jquery.min.js"></script>
+    <script src="Assets/popper.min.js"></script>
+    <script src="Assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="Assets/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-range/4.0.2/moment-range.js"></script>
+
+    <script>
+      /*
+      We need:
+      -list of rooms
+      -date range***
+      -list of reservations
+        -person
+        -start and end date
+        -room
+        -color
+
+        Start and end date - Put div in a location so it is lined up with start and
+        end date
+
+        Layout - F
+      */
+
+      window['moment-range'].extendMoment(moment);
+
+      var rooms = [
+        {"Room_ID":1643, "Building_ID":"AU", "Room_Number":"100" },
+        {"Room_ID":1644, "Building_ID":"AU", "Room_Number":"102" },
+        {"Room_ID":1645, "Building_ID":"AU", "Room_Number":"103" },
+        {"Room_ID":1646, "Building_ID":"AU", "Room_Number":"105" },
+        {"Room_ID":1647, "Building_ID":"CE", "Room_Number":"421" },
+        {"Room_ID":1648, "Building_ID":"CE", "Room_Number":"321" },
+        {"Room_ID":1649, "Building_ID":"CO", "Room_Number":"244" },
+        {"Room_ID":1650, "Building_ID":"SU", "Room_Number":"276" }
+      ];
+
+      var reservations = [
+        {"Person_ID":598412, "Person_Name":"John Doe", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-01", "Reservation_End":"2019-07-01"},
+        {"Person_ID":102938, "Person_Name":"George", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-07-08", "Reservation_End":"2019-07-11"},
+        {"Person_ID":109283, "Person_Name":"Frodo", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
+        {"Person_ID":102983, "Person_Name":"%$#^", "Room_ID":1645, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-05-27", "Reservation_End":"2019-07-15"},
+        {"Person_ID":109348, "Person_Name":"^%$#", "Room_ID":1646, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
+        {"Person_ID":234985, "Person_Name":"Bob Ross", "Room_ID":1647, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
+        {"Person_ID":487516, "Person_Name":"Bob Ross", "Room_ID":1648, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"}
+      ];
+
+      $(function() {
+
+        /**
+          Creates a room container for every room listed and labels it
+        **/
+        $.each(rooms, function(idx, obj) {
+          var roomDiv = $('<div class="room" id="room'+obj.Room_ID+'"></div>');
+          $("body").append(roomDiv);
+          var numDiv = $('<div class="num fixed-" id="'+obj.Room_ID+'">'+obj.Room_Number+'</div>');
+          $("body").append(numDiv);
+          //$("#"+obj.Room_ID).css("top", $("#room"+obj.Room_ID).position().top);
+          //$("#"+obj.Room_ID).position().top(10 * idx);
+        });
+
+        var smallestDate = "0"
+        var greatestDate = "0";
+        /**
+          Creates a bar for each reservation in a room
+          and calculates the youngest and oldest start/end dates
+        **/
+        $.each(reservations, function(idx, obj) {
+          // Calculates the oldest and youngest dates of residents
+          var startDate = obj.Reservation_Start;
+          if(idx === 0) {
+            smallestDate = startDate;
+          } else if(startDate < smallestDate) {
+            smallestDate = startDate;
+          }
+          var endDate = obj.Reservation_End;
+          if(endDate > greatestDate) {
+            greatestDate = endDate;
+          }
+          var resDiv = $('<div class="reservation" id="res'+obj.Person_ID+'">'+obj.Person_Name+'</div>');
+          $("#room" + obj.Room_ID).append(resDiv);
+        });
+
+        /**
+          Adjusts the location of rooms based on the number
+          of people in them
+        **/
+        $.each(rooms, function(idx, obj) {
+          var room = $("#room" + obj.Room_ID);
+          if(idx === 0) {
+            room.css("top", 100);
+          } else {
+            room.css("top", prevRoom.position().top + (30 * prevChildCount) + 50 + "px");
+          }
+          prevRoom = room;
+          prevChildCount = room.children('div').length;
+          $("#"+obj.Room_ID).css("top", room.position().top + 15 + "px");
+        });
+
+
+        // Converts the oldest/youngest dates into an Array
+        // of every day in between them
+        var range = moment.range(moment(smallestDate), moment(greatestDate));
+        var dates = Array.from(range.by('days')).map(m => m.format("YYYY-MM-DD"));
+        var days = Array.from(range.by('days')).map(m => m.format("DD"));
+        $("#month").text(moment(smallestDate).format("MMMM"));
+        $("#year").text(moment(smallestDate).format("YYYY"));
+
+        /**
+          Writes a label for every day that a resident is in a room
+        **/
+        $.each(dates, function(idx, obj) {
+          var day = days[idx];
+          var dateDiv = null;
+          if(day === "01") {
+            day = dates[idx].substring(5, 7) + "-" + day;
+            dateDiv = $('<div class="date firstDays" id="'+obj+'">'+day+'</div>');
+          } else {
+            dateDiv = $('<div class="date" id="'+obj+'">'+day+'</div>');
+          }
+          $("#date_box").append(dateDiv);
+          $("#"+obj).css("left", 60 + (idx * 120) + "px");
+          $("#"+obj).css("top", "80px");
+        });
+
+        $(".room").css("width", $("#" + dates[dates.length - 1]).offset().left + 50 + "px");
+
+        /**
+          Takes every reservation div and shifts/morphs it to
+          fit in the res' time parameters
+        **/
+        $.each(reservations, function(idx, obj) {
+          var resBar = $("#res"+obj.Person_ID);
+          var startLocation = $("#"+obj.Reservation_Start).offset().left - 60;
+          resBar.css("left", startLocation + "px");
+          var width = $("#"+obj.Reservation_End).offset().left - startLocation;
+          resBar.css("width", width + "px");
+        });
+
+        /**
+          Update Month and year after scrolling
+          past a threshold??
+        **/
+        $(window).scroll(function() {
+          $(".firstDays").each(function(idx, obj) {
+            var currentDay = $(obj);
+            var date = currentDay.attr("id");
+            if($(window).scrollLeft() > currentDay.position().left) {
+              $("#month").text(moment(date).format("MMMM"));
+              $("#year").text(moment(date).subtract(1, "month").format("YYYY"));
+            } else if($(window).scrollLeft() < $($(".firstDays").get(0)).position().left) {
+              $("#month").text(moment(dates[0]).format("MMMM"));
+              $("#year").text(moment(dates[0]).subtract(1, "month").format("YYYY"));
+            }
+          });
+        });
+
+        /**
+          Hide certain rooms depending on which menu button
+          is clicked (Hide or remove??)
+        **/
+        function hideRooms(dormID) {
+          //location.reload();
+          $.each(rooms, function(idx, obj) {
+            var room = $("#room" + obj.Room_ID);
+            var roomNum = $("#" + obj.Room_ID);
+            if(obj.Building_ID != dormID) {
+              room.hide();
+              roomNum.hide();
+            } else {
+              room.show();
+              roomNum.show();
+            }
+          });
+        };
+        $("#AU").click(function() {
+          hideRooms("AU");
+        });
+        $("#CO").click(function() {
+          hideRooms("CO");
+        });
+        $("#CE").click(function() {
+          hideRooms("CE");
+        });
+        $("#SU").click(function() {
+          hideRooms("SU");
+        });
+
+      });
+
+    </script>
+
+  </body>
+</html>
