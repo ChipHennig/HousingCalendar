@@ -9,8 +9,12 @@
     <link rel="stylesheet" href="Assets/bootstrap/css/bootstrap.min.css">
     <style media="screen">
 
-      .room {
+      .row {
         position: absolute;
+      }
+
+      .room {
+        position: relative;
         left: 45px;
         border:1px solid green;
         padding:5px;
@@ -22,7 +26,6 @@
         height: 30px;
         border:1px solid blue;
         padding:5px;
-        margin: 4px;
       }
 
       .date {
@@ -36,7 +39,7 @@
         text-align: right;
         height: 150px;
         width: 45px;
-        padding-right: 5px;
+        padding-right: 2px;
         background-color: white;
       }
 
@@ -44,16 +47,20 @@
 
       }
 
+      ul {
+        list-style-type: none;
+      }
+
       #title {
 
       }
 
       #month {
-        align-items: flex-end;
+
       }
 
       #year {
-        align-items: flex-end;
+
       }
 
     </style>
@@ -63,30 +70,37 @@
   </head>
   <body>
 
-    <ul class="nav fixed-top" style="">
-      <li class="nav-item">
-        <h1 class="nav-text" id="title">MLC Dorm Reservation Calendar</h1>
-      </li>
-      <li class="nav-item">
-        <h1 id="month">Month</h1>
-      </li>
-      <li class="nav-item">
-        <h1 id="year">Year</h1>
-      </li>
-      <li class="nav-item dropdown">
-        <div class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle" style="position: relative" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Pick Building
-          </button>
-          <div class="dropdown-menu" style="position: relative" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" id="AU">Augustana</a>
-            <a class="dropdown-item" id="CO">Concord</a>
-            <a class="dropdown-item" id="CE">Centennial</a>
-            <a class="dropdown-item" id="SU">Summit</a>
-          </div>
-        </div>
-      </li>
-    </ul>
+    <nav id="title" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <h1 class="navbar-brand" href="#">MLC Dorm Reservation Calendar</h1>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <h1 class="navbar-brand" id="month">Month<span class="sr-only">(current)</span></h1>
+          </li>
+          <li class="nav-item">
+            <h1 class="navbar-brand" id="year">Year</h1>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Pick Building
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" id="CO">Concord</a>
+              <a class="dropdown-item" id="AU">Augustana</a>
+              <a class="dropdown-item" id="CE">Centennial</a>
+              <a class="dropdown-item" id="SU">Summit</a>
+            </div>
+          </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
 
     <div id="date_box" style="padding:10px"></div>
 
@@ -144,10 +158,12 @@
           Creates a room container for every room listed and labels it
         **/
         $.each(rooms, function(idx, obj) {
-          var roomDiv = $('<div class="room" id="room'+obj.Room_ID+'"></div>');
-          $("body").append(roomDiv);
-          var numDiv = $('<div class="num fixed-" id="'+obj.Room_ID+'">'+obj.Room_Number+'</div>');
-          $("body").append(numDiv);
+          var rowDiv = $('<div class="row d-flex" id="row'+obj.Room_ID+'"></div>')
+          $("body").append(rowDiv);
+          var roomDiv = $('<div class="room align-self-end" id="room'+obj.Room_ID+'"></div>');
+          rowDiv.append(roomDiv);
+          var numDiv = $('<div class="num align-self-start" id="'+obj.Room_ID+'">'+obj.Room_Number+'</div>');
+          rowDiv.append(numDiv);
           //$("#"+obj.Room_ID).css("top", $("#room"+obj.Room_ID).position().top);
           //$("#"+obj.Room_ID).position().top(10 * idx);
         });
@@ -232,16 +248,16 @@
 
         /**
           Update Month and year after scrolling
-          past a threshold??
+          past a threshold
         **/
         $(window).scroll(function() {
           $(".firstDays").each(function(idx, obj) {
             var currentDay = $(obj);
             var date = currentDay.attr("id");
-            if($(window).scrollLeft() > currentDay.position().left) {
+            if($(window).scrollLeft() > currentDay.offset().left) {
               $("#month").text(moment(date).format("MMMM"));
               $("#year").text(moment(date).subtract(1, "month").format("YYYY"));
-            } else if($(window).scrollLeft() < $($(".firstDays").get(0)).position().left) {
+            } else if($(window).scrollLeft() < $($(".firstDays").get(0)).offset().left) {
               $("#month").text(moment(dates[0]).format("MMMM"));
               $("#year").text(moment(dates[0]).subtract(1, "month").format("YYYY"));
             }
@@ -255,12 +271,15 @@
         function hideRooms(dormID) {
           //location.reload();
           $.each(rooms, function(idx, obj) {
+            var row = $("#row" + obj.Room_ID);
             var room = $("#room" + obj.Room_ID);
             var roomNum = $("#" + obj.Room_ID);
             if(obj.Building_ID != dormID) {
+              row.hide();
               room.hide();
               roomNum.hide();
             } else {
+              row.show();
               room.show();
               roomNum.show();
             }
