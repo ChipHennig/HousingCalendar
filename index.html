@@ -9,36 +9,37 @@
     <link rel="stylesheet" href="Assets/bootstrap/css/bootstrap.min.css">
     <style media="screen">
 
-      .row {
+      .grid_box {
         position: absolute;
+        top: 100px;
+        grid-auto-columns: 80px;
+        grid-auto-rows: auto;
+        display: grid;
+      }
+
+      .rowThing {
+
       }
 
       .room {
-        position: relative;
-        left: 45px;
         border:1px solid green;
         padding:5px;
-        margin:20px;
         z-index: -1;
       }
       .reservation {
-        position: relative;
         height: 30px;
         border:1px solid blue;
         padding:5px;
       }
 
       .date {
-        position: absolute;
-        white-space: nowrap;
         z-index: -1;
       }
 
       .num {
-        position: fixed;
-        text-align: right;
         height: 150px;
-        width: 45px;
+        margin-right: 20px;
+        text-align: right;
         padding-right: 2px;
         background-color: white;
       }
@@ -102,7 +103,8 @@
       </div>
     </nav>
 
-    <div id="date_box" style="padding:10px"></div>
+    <div class="grid_box"></div>
+
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -158,18 +160,21 @@
           Creates a room container for every room listed and labels it
         **/
         $.each(rooms, function(idx, obj) {
-          var rowDiv = $('<div class="row d-flex" id="row'+obj.Room_ID+'"></div>')
-          $("body").append(rowDiv);
-          var roomDiv = $('<div class="room align-self-end" id="room'+obj.Room_ID+'"></div>');
+          var gridIndex = idx + 2;
+          var nextIndex = gridIndex + 1;
+          var rowDiv = $('<div class="rowThing" id="row' + obj.Room_ID + '" style="grid-column: 2; grid-row:' + gridIndex + ' / ' + nextIndex + ';"></div>')
+          $(".grid_box").append(rowDiv);
+          var numDiv = $('<div class="num" id="' + obj.Room_ID + '" style="grid-column:1; grid-row:' + gridIndex + ' / ' + nextIndex + ';">'+obj.Room_Number+'</div>');
+          $(".grid_box").append(numDiv);
+          var roomDiv = $('<div class="room" id="room'+obj.Room_ID+'"></div>');
           rowDiv.append(roomDiv);
-          var numDiv = $('<div class="num align-self-start" id="'+obj.Room_ID+'">'+obj.Room_Number+'</div>');
-          rowDiv.append(numDiv);
           //$("#"+obj.Room_ID).css("top", $("#room"+obj.Room_ID).position().top);
           //$("#"+obj.Room_ID).position().top(10 * idx);
         });
 
         var smallestDate = "0"
         var greatestDate = "0";
+        
         /**
           Creates a bar for each reservation in a room
           and calculates the youngest and oldest start/end dates
@@ -196,6 +201,7 @@
         **/
         $.each(rooms, function(idx, obj) {
           var room = $("#room" + obj.Room_ID);
+          /*
           if(idx === 0) {
             room.css("top", 100);
           } else {
@@ -204,6 +210,7 @@
           prevRoom = room;
           prevChildCount = room.children('div').length;
           $("#"+obj.Room_ID).css("top", room.position().top + 15 + "px");
+          */
         });
 
 
@@ -219,25 +226,25 @@
           Writes a label for every day that a resident is in a room
         **/
         $.each(dates, function(idx, obj) {
+          var gridIndex = idx + 2;
           var day = days[idx];
-          var dateDiv = null;
+          var dateDiv = dateDiv = $('<div class="date" id="' + obj + '" style="grid-column:' + gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
           if(day === "01") {
             day = dates[idx].substring(5, 7) + "-" + day;
-            dateDiv = $('<div class="date firstDays" id="'+obj+'">'+day+'</div>');
-          } else {
-            dateDiv = $('<div class="date" id="'+obj+'">'+day+'</div>');
+            dateDiv = $('<div class="date firstDays" id="' + obj + '" style="grid-column:' + gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
           }
-          $("#date_box").append(dateDiv);
-          $("#"+obj).css("left", 60 + (idx * 120) + "px");
-          $("#"+obj).css("top", "80px");
+          $(".grid_box").append(dateDiv);
         });
 
-        $(".room").css("width", $("#" + dates[dates.length - 1]).offset().left + 50 + "px");
+        console.log(dates.length);
+        var lastColumn = dates.length + 2;
+        $(".rowThing").css("grid-column", '2 / ' + lastColumn + '');
 
         /**
           Takes every reservation div and shifts/morphs it to
           fit in the res' time parameters
         **/
+        /*
         $.each(reservations, function(idx, obj) {
           var resBar = $("#res"+obj.Person_ID);
           var startLocation = $("#"+obj.Reservation_Start).offset().left - 60;
@@ -245,6 +252,8 @@
           var width = $("#"+obj.Reservation_End).offset().left - startLocation;
           resBar.css("width", width + "px");
         });
+        */
+
 
         /**
           Update Month and year after scrolling
