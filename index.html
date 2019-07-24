@@ -10,25 +10,28 @@
     <style media="screen">
 
       .grid_box {
+        display: grid;
         position: absolute;
         top: 75px;
         grid-auto-columns: 80px;
         grid-auto-rows: auto;
-        display: grid;
       }
 
       .room {
+        display: grid;
+        grid-auto-columns: 80px;
         margin: 5px;
         border:1px solid green;
-        padding:5px;
+        padding-right: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
         z-index: -1;
       }
       .reservation {
-        position: relative;
         margin: 5px;
         height: 30px;
         border:1px solid blue;
-        padding:5px;
+        padding: 5px;
       }
 
       .date {
@@ -115,15 +118,15 @@
             </div>
           </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input id="searchForm" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button id="search" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        <form id="searchForm" class="form-inline my-2 my-lg-0">
+          <input id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
       </div>
     </nav>
 
     <div class="grid_box">
-      <div class="num" style="grid-column: 1; grid-row: 1">Room #</div>
+      <div class="num" style="grid-column: 1; grid-row: 1;">Room #</div>
     </div>
 
 

@@ -17,7 +17,7 @@ We need:
 window['moment-range'].extendMoment(moment);
 
 var rooms = [
-  {"Room_ID":1643, "Building_ID":"AU", "Room_Number":"100" },
+  {"Room_ID":1643, "Building_ID":"CO", "Room_Number":"100" },
   {"Room_ID":1644, "Building_ID":"AU", "Room_Number":"102" },
   {"Room_ID":1645, "Building_ID":"SU", "Room_Number":"103" },
   {"Room_ID":1646, "Building_ID":"SU", "Room_Number":"105" },
@@ -31,6 +31,9 @@ var reservations = [
   {"Person_ID":598412, "Person_Name":"John Doe", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-01", "Reservation_End":"2019-07-01"},
   {"Person_ID":102938, "Person_Name":"George", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-07-08", "Reservation_End":"2019-07-11"},
   {"Person_ID":109283, "Person_Name":"Frodo", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
+  {"Person_ID":598482, "Person_Name":"Aragorn", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-01", "Reservation_End":"2019-07-01"},
+  {"Person_ID":102978, "Person_Name":"Gandalf", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-07-08", "Reservation_End":"2019-07-11"},
+  {"Person_ID":109293, "Person_Name":"Sam", "Room_ID":1643, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
   {"Person_ID":102983, "Person_Name":"%$#^", "Room_ID":1645, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-05-27", "Reservation_End":"2019-07-15"},
   {"Person_ID":109348, "Person_Name":"^%$#", "Room_ID":1646, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
   {"Person_ID":234985, "Person_Name":"Bob Ross", "Room_ID":1647, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-07-12"},
@@ -38,7 +41,25 @@ var reservations = [
   {"Person_ID":487511, "Person_Name":"Rob Boss", "Room_ID":1648, "Reservation_Color":"#ff00ff", "Reservation_Start":"2019-06-02", "Reservation_End":"2019-08-01"}
 ];
 
+// 
+var resGroup = {};
+
 $(function() {
+  /*
+  An idea of adding a resGroup for each room??
+  Prevents O(n^2) when re-spacing reservations
+
+  $.each(rooms, function(idx, obj) {
+
+    $.each(reservations, function(idx2, obj2) {
+      if(obj2.Room_ID === obj.Room_ID) {
+        reservations[idx2]
+      }
+    });
+    obj.push(resGroup[idx]);
+    console.log(obj);
+  });
+  */
 
   /**
     Creates a room container for every room listed and labels it
@@ -50,16 +71,20 @@ $(function() {
     $(".grid_box").append(numDiv);
     var roomDiv = $('<div class="room card" id="room' + obj.Room_ID + '" style="grid-column: 2; grid-row: ' + gridIndex + ' / ' + nextIndex + ';"></div>');
     $(".grid_box").append(roomDiv);
-    //$("#"+obj.Room_ID).css("top", $("#room"+obj.Room_ID).position().top);
-    //$("#"+obj.Room_ID).position().top(10 * idx);
+    resGroup.push([]);
+    $.each(reservations, function(idx2, obj2) {
+      if(obj.Room_ID === obj2.Room_ID) {
+        resGroup[0].push(obj2);
+      }
+    });
+
   });
 
   var smallestDate = "0"
   var greatestDate = "0";
 
   /**
-    Creates a bar for each reservation in a room
-    and calculates the youngest and oldest start/end dates
+    Calculates the youngest and oldest start/end dates
   **/
   $.each(reservations, function(idx, obj) {
     // Calculates the oldest and youngest dates of residents
@@ -73,8 +98,6 @@ $(function() {
     if(endDate > greatestDate) {
       greatestDate = endDate;
     }
-    var resDiv = $('<div class="reservation card" id="res'+obj.Person_ID+'" style="grid-column: 3;">' + obj.Person_Name + '</div>');
-    $("#room" + obj.Room_ID).append(resDiv);
   });
 
   // Converts the oldest/youngest dates into an Array
@@ -99,32 +122,51 @@ $(function() {
     $(".grid_box").append(dateDiv);
   });
 
-  $.each(reservations, function(idx, obj) {
-    // Shifts reservation location to its time interval location
-    var resBar = $("#res" + obj.Person_ID);
-    var startCol = $("#" + obj.Reservation_Start).css("grid-column");
-    var endCol = $("#" + obj.Reservation_End).css("grid-column");
-    resBar.css("grid-column", startCol + " / " + endCol);
-  });
-
   var lastColumn = dates.length + 2;
   // Ends room rows at the last reservation date
   $(".room").css("grid-column", '2 / ' + lastColumn + '');
 
-  /**
-    Takes every reservation div and shifts/morphs it to
-    fit in the res' time parameters
-  **/
+  /*
+  Creates reservation divs
+  */
   $.each(reservations, function(idx, obj) {
-    var resBar = $("#res" + obj.Person_ID);
-    var startLocation = $("#" + obj.Reservation_Start).offset().left;
-    var adjust = startLocation - 115;
-    resBar.css("left", adjust + "px");
-    var width = $("#"+obj.Reservation_End).offset().left - startLocation + 55;
-    resBar.css("width", width + "px");
+    var startCol = parseInt($("#" + obj.Reservation_Start).css("grid-column-start")) - 1;
+    var endCol =  parseInt($("#" + obj.Reservation_End).css("grid-column-start"));
+
+    var resDiv = $('<div class="reservation card" id="res' + obj.Person_ID + '" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: 1;">' + obj.Person_Name + '</div>');
+    $("#room" + obj.Room_ID).append(resDiv);
   });
 
+  /**
+  Attempting to check if a reservation overlaps with
+  another one
 
+  It should move reservations to the next row if they overlap
+  **/
+  $.each(reservations, function(idx, obj) {
+    // Shifts reservation location to its time interval location
+    var startCol = parseInt($("#" + obj.Reservation_Start).css("grid-column-start")) - 1;
+    var endCol =  parseInt($("#" + obj.Reservation_End).css("grid-column-start"));
+
+    var rowNum =  parseInt($("#res" + obj.Person_ID).css("grid-row"));
+    $.each(reservations, function(idx2, obj2) {
+      if(idx2 !== idx) {
+        var otherStart = parseInt($("#" + obj2.Reservation_Start).css("grid-column-start")) - 1;
+        var otherEnd = parseInt($("#" + obj2.Reservation_End).css("grid-column-start"));
+        var otherRow =  parseInt($("#res" + obj2.Person_ID).css("grid-row-start"));
+        //console.log(otherStart);
+        //console.log(otherEnd);
+        console.log(otherRow);
+        if(obj.Room_ID === obj2.Room_ID && !(endCol < otherStart || startCol > otherEnd
+        || rowNum !== otherRow)) {
+          console.log("Overlap!");
+          rowNum++;
+        }
+      }
+    });
+    var resBar = $("#res" + obj.Person_ID);
+    resBar.css("grid-row-start", rowNum);
+  });
 
   /**
     Update Month and year after scrolling
@@ -184,29 +226,36 @@ $(function() {
 
   /**
   Search for a specific person name with a search form
+  DOESN"T WORK RN
   **/
   function hideRoomsName(name) {
     //location.reload();
     $.each(rooms, function(idx, obj) {
       console.log(name);
-      var inRes = false;
       var room = $("#room" + obj.Room_ID);
       var roomNum = $("#" + obj.Room_ID);
-      $.each(reservations, function(idx2, obj2) {
-        if(obj2.Room_ID === obj.Room_ID && obj2.Person_Name === name) {
-          console.log("yes");
-          inRes = true;
-        }
-      });
+      var inRes = checkRes(obj, name);
       if(!inRes) {
         room.hide();
         roomNum.hide();
       } else {
+        console.log("yes?");
         room.show();
         roomNum.show();
       }
     });
   };
+
+  function checkRes(room, name) {
+    $.each(reservations, function(idx, obj) {
+      console.log(name);
+      if(room.Room_ID === obj.Room_ID && obj.Person_Name === name) {
+        console.log("yes");
+        return true;
+      }
+    });
+    return false;
+  }
 
   /**
   Hide all rooms without reservations
@@ -232,9 +281,32 @@ $(function() {
     });
   };
 
-  $("#search").click(function() {
-    var name = $("#searchForm").text();
-    hideRoomsName("Bob Ross");
+  /**
+  Hide all rooms with reservations
+  **/
+  function hideFilledRooms() {
+    //location.reload();
+    $.each(rooms, function(idx, obj) {
+      var hasRes = false;
+      var room = $("#room" + obj.Room_ID);
+      var roomNum = $("#" + obj.Room_ID);
+      $.each(reservations, function(idx2, obj2) {
+        if(obj2.Room_ID === obj.Room_ID) {
+          hasRes = true;
+        }
+      });
+      if(hasRes) {
+        room.hide();
+        roomNum.hide();
+      } else {
+        room.show();
+        roomNum.show();
+      }
+    });
+  };
+
+  $("#searchForm").on("submit", function(e) {
+    hideRoomsName($("#searchText").val());
   });
 
   $("#yes").click(function() {
@@ -244,6 +316,10 @@ $(function() {
 
   $("#no").click(function() {
     hideEmptyRooms();
+  })
+
+  $("#only").click(function() {
+    hideFilledRooms();
   })
 
 });
