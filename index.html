@@ -1,144 +1,169 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="Assets/bootstrap/css/bootstrap.min.css">
-    <style media="screen">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-      .grid_box {
-        display: grid;
-        position: absolute;
-        top: 75px;
-        grid-auto-columns: 80px;
-        grid-auto-rows: auto;
-      }
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="Assets/bootstrap/css/bootstrap.min.css">
 
-      .room {
-        display: grid;
-        grid-auto-columns: 80px;
-        margin: 5px;
-        border:1px solid green;
-        padding: 5px;
-        z-index: -1;
-      }
-      .reservation {
-        margin: 5px;
-        height: 30px;
-        border:1px solid blue;
-        padding: 5px;
-      }
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="Assets/jquery.min.js"></script>
+  <script src="Assets/popper.min.js"></script>
+  <script src="Assets/bootstrap/js/bootstrap.min.js"></script>
+  <!-- Moment.js -->
+  <script src="Assets/moment.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-range/4.0.2/moment-range.js"></script>
+  <!-- Tempus Dominus -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+  <!-- Open Iconic -->
+  <link href="Assets/open-iconic-master/font/css/open-iconic-bootstrap.css" rel="stylesheet">
 
-      .date {
-        z-index: -1;
-      }
+  <script src="logic.js"></script>
 
-      .num {
-        margin-right: 20px;
-        text-align: right;
-        padding-right: 2px;
-        background-color: white;
-      }
+  <style media="screen">
+    .grid_box {
+      display: grid;
+      position: absolute;
+      top: 75px;
+      grid-auto-columns: 80px;
+    }
 
-      .dropdown {
+    .room {
+      display: grid;
+      grid-auto-columns: 80px;
+      margin: 5px;
+      border: 1px solid green;
+      padding: 5px;
+      z-index: -1;
+    }
 
-      }
+    .reservation {
+      margin: 5px;
+      height: 30px;
+      border: 1px solid blue;
+      padding: 5px;
+    }
 
-      ul {
-        list-style-type: none;
-      }
+    .date {
+      z-index: -1;
+    }
 
-      #title {
+    .num {
+      margin-right: 20px;
+      text-align: right;
+      padding-right: 2px;
+      background-color: white;
+    }
 
-      }
+    ul {
+      list-style-type: none;
+    }
+  </style>
 
-      #month {
+  <title>MLC Dorm Reservation</title>
 
-      }
+</head>
 
-      #year {
+<body>
 
-      }
-
-    </style>
-
-    <title>MLC Dorm Reservation</title>
-
-  </head>
-  <body>
-
-    <nav id="title" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-      <h1 class="navbar-brand" href="#">MLC Dorm Reservation Calendar</h1>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <h1 class="navbar-brand" id="month"><span class="sr-only">(current)</span></h1>
-          </li>
-          <li class="nav-item">
-            <h1 class="navbar-brand" id="year"></h1>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Pick Building
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" id="CO">Concord</a>
-              <a class="dropdown-item" id="AU">Augustana</a>
-              <a class="dropdown-item" id="CE">Centennial</a>
-              <a class="dropdown-item" id="SU">Summit</a>
-              <a class="dropdown-item" id="ALL">All</a>
+  <nav id="title" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <h1 class="navbar-brand" href="#">MLC Dorm Reservation Calendar</h1>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <h1 class="navbar-brand" id="month"><span class="sr-only">(current)</span></h1>
+        </li>
+        <li class="nav-item">
+          <h1 class="navbar-brand" id="year"></h1>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Pick Building
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" id="CO">Concord</a>
+            <a class="dropdown-item" id="AU">Augustana</a>
+            <a class="dropdown-item" id="CE">Centennial</a>
+            <a class="dropdown-item" id="SU">Summit</a>
+            <a class="dropdown-item" id="ALL">All</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Show Empty?
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" id="yes">Yes</a>
+            <a class="dropdown-item" id="no">No</a>
+            <a class="dropdown-item" id="only">Only</a>
+          </div>
+        </li>
+        <li>
+          <div class="form-inline">
+            <input id="searchText" class="form-control mr-sm-2" placeholder="Room # or Name" aria-label="Search">
+            <button id="searchButton" class="btn btn-outline-success">Find</button>
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li>
+          <div class="form-inline">
+            <div class='col-md-5'>
+              <div class="form-group">
+                <div class="input-group date" id="datetimepicker7" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker7" />
+                  <div class="input-group-append" data-target="#datetimepicker7" data-toggle="datetimepicker">
+                    <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span></div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Show Empty?
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" id="yes">Yes</a>
-              <a class="dropdown-item" id="no">No</a>
-              <a class="dropdown-item" id="only">Only</a>
+            <div class='col-md-5'>
+              <div class="form-group">
+                <div class="input-group date" id="datetimepicker8" data-target-input="nearest">
+                  <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker8" />
+                  <div class="input-group-append" data-target="#datetimepicker8" data-toggle="datetimepicker">
+                    <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span></div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Type
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" id="AU">Yes</a>
-              <a class="dropdown-item" id="AU">No</a>
-              <a class="dropdown-item" id="CE">Only</a>
-            </div>
-          </li>
-        </ul>
-        <form id="searchForm" class="form-inline my-2 my-lg-0">
-          <input id="searchText" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-      </div>
-    </nav>
+          </div>
+          <script type="text/javascript">
+            $(function () {
+              $('#datetimepicker7').datetimepicker();
+              $('#datetimepicker8').datetimepicker({
+                useCurrent: false
+              });
+              $("#datetimepicker7").on("change.datetimepicker", function (e) {
+                $('#datetimepicker8').datetimepicker('minDate', e.date);
+              });
+              $("#datetimepicker8").on("change.datetimepicker", function (e) {
+                $('#datetimepicker7').datetimepicker('maxDate', e.date);
+              });
+            });
+          </script>
+        </li>
+        <li class="nav-item">
+          <button id="reset" class="btn btn-outline-dark">Reset</button>
+        </li>
 
-    <div class="grid_box">
-      <div class="num" style="grid-column: 1; grid-row: 1;">Room #</div>
+      </ul>
     </div>
+  </nav>
+
+  <div class="grid_box">
+    <div class="num" style="grid-column: 1; grid-row: 1;">Room #</div>
+  </div>
 
 
+</body>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="Assets/jquery.min.js"></script>
-    <script src="Assets/popper.min.js"></script>
-    <script src="Assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="Assets/moment.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-range/4.0.2/moment-range.js"></script>
-    <!-- Use bootstrap DatePicker?? <script type="text/javascript" src="/path/to/bootstrap-datetimepicker.min.js"></script> -->
-
-    <script src="logic.js"></script>
-
-  </body>
 </html>

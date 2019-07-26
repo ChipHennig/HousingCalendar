@@ -19,7 +19,7 @@ window['moment-range'].extendMoment(moment);
 var rooms = [
   {"Room_ID":1643, "Building_ID":"CO", "Room_Number":"100", "Res_Group":[] },
   {"Room_ID":1644, "Building_ID":"AU", "Room_Number":"102", "Res_Group":[] },
-  {"Room_ID":1645, "Building_ID":"SU", "Room_Number":"103", "Res_Group":[]},
+  {"Room_ID":1645, "Building_ID":"SU", "Room_Number":"103", "Res_Group":[] },
   {"Room_ID":1646, "Building_ID":"SU", "Room_Number":"105", "Res_Group":[] },
   {"Room_ID":1647, "Building_ID":"CE", "Room_Number":"421", "Res_Group":[] },
   {"Room_ID":1648, "Building_ID":"CE", "Room_Number":"321", "Res_Group":[] },
@@ -50,31 +50,21 @@ var reservations = [
 //
 
 $(function() {
-  /*
-  An idea of adding a resGroup for each room??
-  Prevents O(n^2) when re-spacing reservations
-
-  $.each(rooms, function(idx, obj) {
-
-    $.each(reservations, function(idx2, obj2) {
-      if(obj2.Room_ID === obj.Room_ID) {
-        reservations[idx2]
-      }
-    });
-    obj.push(resGroup[idx]);
-    console.log(obj);
-  });
-  */
 
   /**
     Creates a room container for every room listed and labels it
+    Organizes each room's Res_Group into rows of reservations
   **/
   $.each(rooms, function(idx, obj) {
     var gridIndex = idx + 2;
     var nextIndex = gridIndex + 1;
-    var numDiv = $('<div class="num" id="' + obj.Room_ID + '" style="grid-column: 1; grid-row: ' + gridIndex + ' / ' + nextIndex + ';">' + obj.Room_Number + '</div>');
+    var numDiv = $('<div class="num" id="' + obj.Room_ID + '" style="grid-column: 1; grid-row: ' +
+      gridIndex + ' / ' + nextIndex + ';">' + obj.Room_Number + '</div>');
+
     $(".grid_box").append(numDiv);
-    var roomDiv = $('<div class="room card" id="room' + obj.Room_ID + '" style="grid-column: 2; grid-row: ' + gridIndex + ' / ' + nextIndex + ';"></div>');
+    var roomDiv = $('<div class="room card" id="room' + obj.Room_ID + '" style="grid-column: 2; grid-row: ' +
+      gridIndex + ' / ' + nextIndex + ';"></div>');
+
     $(".grid_box").append(roomDiv);
 
     // Organizes each room's reservations
@@ -145,10 +135,12 @@ $(function() {
   $.each(dates, function(idx, obj) {
     var gridIndex = idx + 2;
     var day = days[idx];
-    var dateDiv = dateDiv = $('<div class="date" id="' + obj + '" style="grid-column:' + gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
+    var dateDiv = dateDiv = $('<div class="date" id="' + obj + '" style="grid-column:' +
+      gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
     if(day === "01") {
       day = dates[idx].substring(5, 7) + "-" + day;
-      dateDiv = $('<div class="date firstDays" id="' + obj + '" style="grid-column:' + gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
+      dateDiv = $('<div class="date firstDays" id="' + obj + '" style="grid-column:' +
+        gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
     }
     $(".grid_box").append(dateDiv);
   });
@@ -170,7 +162,8 @@ $(function() {
         var endCol =  parseInt($("#" + currentRes.Reservation_End).css("grid-column-start"));
         var row = i + 1;
         var resDiv = $('<div class="reservation card" id="res' + currentRes.Person_ID +
-          '" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: ' + row + ';">' + currentRes.Person_Name + '</div>');
+          '" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: ' + row + ';">' +
+            currentRes.Person_Name + '</div>');
         $("#room" + currentRes.Room_ID).append(resDiv);
       }
     }
@@ -234,36 +227,39 @@ $(function() {
 
   /**
   Search for a specific person name with a search form
-  DOESN"T WORK RN
+
   **/
   function hideRoomsName(name) {
-    //location.reload();
     $.each(rooms, function(idx, obj) {
-      console.log(name);
       var room = $("#room" + obj.Room_ID);
       var roomNum = $("#" + obj.Room_ID);
-      var inRes = checkRes(obj, name);
-      if(!inRes) {
+      if(obj.Res_Group.length === 0) {
         room.hide();
         roomNum.hide();
-      } else {
-        console.log("yes?");
+      } else if(roomNum.text().includes(name)) {
         room.show();
         roomNum.show();
+      } else {
+        var inRes = false;
+        for(var i = 0; i < obj.Res_Group.length; i++) {
+          for(var j = 0; j < obj.Res_Group[i].length; j++) {
+            if(obj.Res_Group[i][j] != undefined) {
+              if(obj.Res_Group[i][j].Person_Name.includes(name)) {
+                inRes = true;
+              }
+            }
+          }
+        }
+        if(!inRes) {
+          room.hide();
+          roomNum.hide();
+        } else {
+          room.show();
+          roomNum.show();
+        }
       }
     });
   };
-
-  function checkRes(room, name) {
-    $.each(reservations, function(idx, obj) {
-      console.log(name);
-      if(room.Room_ID === obj.Room_ID && obj.Person_Name === name) {
-        console.log("yes");
-        return true;
-      }
-    });
-    return false;
-  }
 
   /**
   Hide all rooms without reservations
@@ -274,12 +270,7 @@ $(function() {
       var hasRes = false;
       var room = $("#room" + obj.Room_ID);
       var roomNum = $("#" + obj.Room_ID);
-      $.each(reservations, function(idx2, obj2) {
-        if(obj2.Room_ID === obj.Room_ID) {
-          hasRes = true;
-        }
-      });
-      if(!hasRes) {
+      if(obj.Res_Group.length === 0) {
         room.hide();
         roomNum.hide();
       } else {
@@ -298,12 +289,7 @@ $(function() {
       var hasRes = false;
       var room = $("#room" + obj.Room_ID);
       var roomNum = $("#" + obj.Room_ID);
-      $.each(reservations, function(idx2, obj2) {
-        if(obj2.Room_ID === obj.Room_ID) {
-          hasRes = true;
-        }
-      });
-      if(hasRes) {
+      if(obj.Res_Group.length !== 0) {
         room.hide();
         roomNum.hide();
       } else {
@@ -313,21 +299,27 @@ $(function() {
     });
   };
 
-  $("#searchForm").on("submit", function(e) {
+  $("#searchButton").click(function() {
     hideRoomsName($("#searchText").val());
   });
 
   $("#yes").click(function() {
     $(".room").show();
     $(".num").show();
-  })
+  });
 
   $("#no").click(function() {
     hideEmptyRooms();
-  })
+  });
 
   $("#only").click(function() {
     hideFilledRooms();
-  })
+  });
+
+  $("#reset").click(function() {
+    $(".room").show();
+    $(".num").show();
+  });
+
 
 });
