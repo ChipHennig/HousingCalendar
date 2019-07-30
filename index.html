@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,19 +11,20 @@
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="Assets/jquery.min.js"></script>
+  <script src="Assets/jquery-3.4.1.js"></script>
   <script src="Assets/popper.min.js"></script>
   <script src="Assets/bootstrap/js/bootstrap.min.js"></script>
   <!-- Moment.js -->
   <script src="Assets/moment.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-range/4.0.2/moment-range.js"></script>
   <!-- Tempus Dominus -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/js/tempusdominus-bootstrap-4.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.0-alpha14/css/tempusdominus-bootstrap-4.min.css" />
+  <script src="Assets/tempus/js/tempusdominus-bootstrap-4.js"></script>
+  <link href="Assets/tempus/css/tempusdominus-bootstrap-4.css" rel="stylesheet">
   <!-- Open Iconic -->
   <link href="Assets/open-iconic-master/font/css/open-iconic-bootstrap.css" rel="stylesheet">
 
   <script src="logic.js"></script>
+
 
   <style media="screen">
     .grid_box {
@@ -49,8 +50,8 @@
       padding: 5px;
     }
 
-    .date {
-      z-index: -1;
+    .dateDiv {
+
     }
 
     .num {
@@ -105,56 +106,52 @@
             <a class="dropdown-item" id="only">Only</a>
           </div>
         </li>
-        <li>
-          <div class="form-inline">
-            <input id="searchText" class="form-control mr-sm-2" placeholder="Room # or Name" aria-label="Search">
-            <button id="searchButton" class="btn btn-outline-success">Find</button>
-          </div>
-        </li>
       </ul>
-      <ul class="navbar-nav ml-auto">
-        <li>
-          <div class="form-inline">
-            <div class='col-md-5'>
-              <div class="form-group">
-                <div class="input-group date" id="datetimepicker7" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker7" />
-                  <div class="input-group-append" data-target="#datetimepicker7" data-toggle="datetimepicker">
-                    <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class='col-md-5'>
-              <div class="form-group">
-                <div class="input-group date" id="datetimepicker8" data-target-input="nearest">
-                  <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker8" />
-                  <div class="input-group-append" data-target="#datetimepicker8" data-toggle="datetimepicker">
-                    <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span></div>
-                  </div>
+      <div class="form-inline">
+        <input id="searchText" class="form-control mr-sm-2" placeholder="Room # or Name" aria-label="Search">
+        <button id="searchButton" class="btn btn-outline-success">Find</button>
+      </div>
+      <div class="form-inline">
+          <div class="form-group col-md-5">
+            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"
+              placeholder="Start date" />
+              <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
                 </div>
               </div>
             </div>
           </div>
-          <script type="text/javascript">
-            $(function () {
-              $('#datetimepicker7').datetimepicker();
-              $('#datetimepicker8').datetimepicker({
-                useCurrent: false
-              });
-              $("#datetimepicker7").on("change.datetimepicker", function (e) {
-                $('#datetimepicker8').datetimepicker('minDate', e.date);
-              });
-              $("#datetimepicker8").on("change.datetimepicker", function (e) {
-                $('#datetimepicker7').datetimepicker('maxDate', e.date);
-              });
-            });
-          </script>
-        </li>
+          <div class="form-group col-md-5">
+            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+              <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2"
+              placeholder="End date"/>
+              <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <script type="text/javascript">
+
+        $(function () {
+          $('#datetimepicker1').datetimepicker();
+          $('#datetimepicker2').datetimepicker({
+            useCurrent: false
+          });
+          $("#datetimepicker1").on("change.datetimepicker", function (e) {
+            $('#datetimepicker2').datetimepicker('minDate', e.date);
+          });
+          $("#datetimepicker2").on("change.datetimepicker", function (e) {
+            $('#datetimepicker1').datetimepicker('maxDate', e.date);
+          });
+        });
+      </script>
+      <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           <button id="reset" class="btn btn-outline-dark">Reset</button>
         </li>
-
       </ul>
     </div>
   </nav>
@@ -162,8 +159,6 @@
   <div class="grid_box">
     <div class="num" style="grid-column: 1; grid-row: 1;">Room #</div>
   </div>
-
-
 </body>
 
 </html>
