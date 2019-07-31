@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="Assets/bootstrap/css/bootstrap.min.css">
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="Assets/jquery-3.4.1.js"></script>
+  <script src="Assets/popper.min.js"></script>
+  <script src="Assets/bootstrap/js/bootstrap.min.js"></script>
+  <!-- Moment.js -->
+  <script src="Assets/moment.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-range/4.0.2/moment-range.js"></script>
+  <!-- Tempus Dominus -->
+  <script src="Assets/tempus/js/tempusdominus-bootstrap-4.js"></script>
+  <link href="Assets/tempus/css/tempusdominus-bootstrap-4.css" rel="stylesheet">
+  <!-- Open Iconic -->
+  <link href="Assets/open-iconic-master/font/css/open-iconic-bootstrap.css" rel="stylesheet">
+
+  <script src="just_grid_logic.js"></script>
+
+
+  <style media="screen">
+    .grid_box {
+      display: grid;
+      grid-auto-columns: 80px;
+    }
+
+    .room {
+      display: grid;
+      grid-auto-columns: 80px;
+      margin: 5px;
+      border: 1px solid green;
+      padding: 5px;
+    }
+
+    .reservation {
+      margin: 5px;
+      height: 30px;
+      border: 1px solid blue;
+      padding: 5px;
+    }
+
+    .dateDiv {
+
+    }
+
+    .roomNum {
+
+    }
+
+    .numText {
+      background-color: white;
+      position: fixed;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .arrow-left {
+      width: 0px;
+      height: 0px;
+      justify-self: start;
+      align-self: center;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-right: 15px solid blue;
+      z-index: 1;
+    }
+
+    .arrow-right {
+      width: 0px;
+      height: 0px;
+      justify-self: end;
+      align-self: center;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 15px solid blue;
+      z-index: 1;
+    }
+
+  </style>
+
+  <title>MLC Dorm Reservation</title>
+
+</head>
+
+<body>
+
+  <div class="grid_box">
+    <div class="roomNum" style="grid-column: 1; grid-row: 1;">Room #</div>
+  </div>
+
+</body>
+
+</html>
