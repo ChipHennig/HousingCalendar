@@ -17,34 +17,34 @@ We need:
 window['moment-range'].extendMoment(moment);
 
 var rooms = [
-  { "Room_ID": 1643, "Building_ID": "CO", "Room_Number": "100", "Res_Group": [] },
+  { "Room_ID": 1643, "Building_ID": "CD", "Room_Number": "100", "Res_Group": [] },
   { "Room_ID": 1644, "Building_ID": "AU", "Room_Number": "102", "Res_Group": [] },
   { "Room_ID": 1645, "Building_ID": "SU", "Room_Number": "103", "Res_Group": [] },
   { "Room_ID": 1646, "Building_ID": "SU", "Room_Number": "105", "Res_Group": [] },
   { "Room_ID": 1647, "Building_ID": "CE", "Room_Number": "421", "Res_Group": [] },
   { "Room_ID": 1648, "Building_ID": "CE", "Room_Number": "321", "Res_Group": [] },
-  { "Room_ID": 1649, "Building_ID": "CO", "Room_Number": "244", "Res_Group": [] },
+  { "Room_ID": 1649, "Building_ID": "CD", "Room_Number": "244", "Res_Group": [] },
   { "Room_ID": 1650, "Building_ID": "SU", "Room_Number": "276", "Res_Group": [] }
 ];
 
 var reservations = [
-  { "Person_ID": 598412, "Person_Name": "John Doe", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-01", "Reservation_End": "2019-07-01" },
-  { "Person_ID": 102938, "Person_Name": "George", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-08", "Reservation_End": "2019-07-11" },
-  { "Person_ID": 109283, "Person_Name": "Frodo", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12" },
-  { "Person_ID": 598482, "Person_Name": "Aragorn", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-01", "Reservation_End": "2019-07-01" },
-  { "Person_ID": 102978, "Person_Name": "Gandalf", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-08", "Reservation_End": "2019-07-11" },
-  { "Person_ID": 109293, "Person_Name": "Sam", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12" },
-  { "Person_ID": 102983, "Person_Name": "%$#^", "Room_ID": 1645, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-05-27", "Reservation_End": "2019-07-15" },
-  { "Person_ID": 109348, "Person_Name": "^%$#", "Room_ID": 1646, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12" },
-  { "Person_ID": 234985, "Person_Name": "Bob Ross", "Room_ID": 1647, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12" },
-  { "Person_ID": 482346, "Person_Name": "Bob Ross", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-05-28", "Reservation_End": "2019-06-12" },
-  { "Person_ID": 482421, "Person_Name": "Rob Boss", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-01" },
-  { "Person_ID": 216425, "Person_Name": "George Washington", "Room_ID": 1647, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-12", "Reservation_End": "2019-07-02" },
-  { "Person_ID": 481856, "Person_Name": "Suleiman", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-08-01", "Reservation_End": "2019-08-02" },
-  { "Person_ID": 483751, "Person_Name": "Ghandi", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-02", "Reservation_End": "2019-08-01" },
-  { "Person_ID": 231755, "Person_Name": "Bob Ross", "Room_ID": 1647, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-05", "Reservation_End": "2019-07-08" },
-  { "Person_ID": 481746, "Person_Name": "Sauron", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12" },
-  { "Person_ID": 484681, "Person_Name": "Saruman", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-08-01" }
+  { "Person_ID": 598412, "Person_Name": "John Doe", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-01", "Reservation_End": "2019-07-01", "isBefore": false, "isAfter": false },
+  { "Person_ID": 102938, "Person_Name": "George", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-08", "Reservation_End": "2019-07-11", "isBefore": false, "isAfter": false },
+  { "Person_ID": 109283, "Person_Name": "Frodo", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12", "isBefore": false, "isAfter": false },
+  { "Person_ID": 598482, "Person_Name": "Aragorn", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-01", "Reservation_End": "2019-07-01", "isBefore": false, "isAfter": false },
+  { "Person_ID": 102978, "Person_Name": "Gandalf", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-08", "Reservation_End": "2019-07-11", "isBefore": false, "isAfter": false },
+  { "Person_ID": 109293, "Person_Name": "Sam", "Room_ID": 1643, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12", "isBefore": false, "isAfter": false },
+  { "Person_ID": 102983, "Person_Name": "%$#^", "Room_ID": 1645, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-05-27", "Reservation_End": "2019-07-15", "isBefore": true, "isAfter": false },
+  { "Person_ID": 109348, "Person_Name": "^%$#", "Room_ID": 1646, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-15", "isBefore": false, "isAfter": false },
+  { "Person_ID": 234985, "Person_Name": "Bob Ross", "Room_ID": 1647, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12", "isBefore": false, "isAfter": false },
+  { "Person_ID": 482346, "Person_Name": "Bob Ross", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-05-28", "Reservation_End": "2019-06-12", "isBefore": false, "isAfter": false },
+  { "Person_ID": 482421, "Person_Name": "Rob Boss", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-01", "isBefore": false, "isAfter": false },
+  { "Person_ID": 216425, "Person_Name": "George Washington", "Room_ID": 1647, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-12", "Reservation_End": "2019-06-13", "isBefore": false, "isAfter": false },
+  { "Person_ID": 481856, "Person_Name": "Suleiman", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-08-01", "Reservation_End": "2019-08-02", "isBefore": false, "isAfter": true },
+  { "Person_ID": 483751, "Person_Name": "Ghandi", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-02", "Reservation_End": "2019-08-01", "isBefore": false, "isAfter": false },
+  { "Person_ID": 231755, "Person_Name": "Bob Ross", "Room_ID": 1647, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-07-05", "Reservation_End": "2019-07-08", "isBefore": false, "isAfter": false },
+  { "Person_ID": 481746, "Person_Name": "Sauron", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-07-12", "isBefore": false, "isAfter": false},
+  { "Person_ID": 484681, "Person_Name": "Saruman", "Room_ID": 1648, "Reservation_Color": "#ff00ff", "Reservation_Start": "2019-06-02", "Reservation_End": "2019-08-02", "isBefore": false, "isAfter": false }
 ];
 
 //
@@ -129,22 +129,22 @@ $(function () {
       }
     });
   };
+  calculateEnds();
 
   /**
     Writes a label for every day that a resident is in a room
   **/
-  function createDates() {
-    calculateEnds();
-
+  function createDates(firstCall) {
     smallestDate = moment(smallestDate);
     greatestDate = moment(greatestDate);
 
-    if ($("#datetimepicker1").datetimepicker("viewDate").isBefore(smallestDate)) {
+    /*
+    if(!firstCall) {
       smallestDate = $("#datetimepicker1").datetimepicker("viewDate");
-    }
-    if ($("#datetimepicker2").datetimepicker("viewDate").isAfter(greatestDate)) {
       greatestDate = $("#datetimepicker2").datetimepicker("viewDate");
     }
+    */
+
 
     // Converts the oldest/youngest dates into an Array
     // of every day in between them
@@ -161,7 +161,7 @@ $(function () {
         gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
       if (day === "01") {
         day = dates[idx].substring(5, 7) + "-" + day;
-        dateDiv = $('<div class="date firstDays" id="' + obj + '" style="grid-column:' +
+        dateDiv = $('<div class="dateDiv firstDays" id="' + obj + '" style="grid-column:' +
           gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
       }
       $(".grid_box").append(dateDiv);
@@ -171,7 +171,7 @@ $(function () {
     lastColumn = dates.length + 2;
     $(".room").css("grid-column", '2 / ' + lastColumn + '');
   };
-  createDates();
+  createDates(true);
 
   /*
   Creates reservation divs
@@ -187,9 +187,30 @@ $(function () {
           var endCol = parseInt($("#" + currentRes.Reservation_End).css("grid-column-start"));
           var row = i + 1;
           var resDiv = $('<div class="reservation card" id="res' + currentRes.Person_ID +
-            '" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: ' + row + ';">' +
+            '" data-toggle="tooltip" data-placement="top" title="<em>' + currentRes.Person_Name +
+            '</em>" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: ' + row + ';">' +
             currentRes.Person_Name + '</div>');
+
+          var start = moment(currentRes.Reservation_Start);
+          var end = moment(currentRes.Reservation_End);
           $("#room" + currentRes.Room_ID).append(resDiv);
+
+          if (currentRes.isBefore) {
+            var triEnd = startCol + 1;
+            var leftTriangle = $('<div class="arrow-left" style="grid-column: ' + startCol + ' / ' +
+              triEnd + '; grid-row: ' + row + ';"></div>');
+            $("#room" + currentRes.Room_ID).append(leftTriangle);
+            $("#res" + currentRes.Person_ID).css("left", "15px");
+            $("#res" + currentRes.Person_ID).css("width", "-=15");
+          } else if (currentRes.isAfter) {
+            var triStart = endCol - 1;
+            var rightTriangle = $('<div class="arrow-right" style="grid-column: ' + triStart + ' / ' +
+              endCol + '; grid-row: ' + row + ';"></div>');
+            $("#room" + currentRes.Room_ID).append(rightTriangle);
+            $("#res" + currentRes.Person_ID).css("width", "-=15");
+          } else if ((endCol + 1) === lastColumn) {
+            $("#res" + currentRes.Person_ID).css("width", "-=15");
+          }
         }
       }
     });
@@ -218,8 +239,8 @@ $(function () {
   $("#AU").click(function () {
     hideRooms("AU");
   });
-  $("#CO").click(function () {
-    hideRooms("CO");
+  $("#CD").click(function () {
+    hideRooms("CD");
   });
   $("#CE").click(function () {
     hideRooms("CE");
@@ -327,6 +348,7 @@ $(function () {
     $(".num").show();
   });
 
+
   /**
     Update Month and year after scrolling
     past a threshold
@@ -345,6 +367,24 @@ $(function () {
         found = true;
       }
     });
+  });
+
+  function changeDate() {
+    createDates(false);
+    calculateEnds();
+    createRes();
+  };
+
+  $("#datetimepicker1").on("change.datetimepicker", function() {
+    changeDate();
+  });
+  $("#datetimepicker2").on("change.datetimepicker", function() {
+    changeDate();
+  });
+
+  $("#res598412").mouseover(function() {
+    console.log("Hm?");
+    $("#res598412").tooltip();
   });
 
 });

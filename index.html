@@ -28,9 +28,9 @@
 
   <style media="screen">
     .grid_box {
-      display: grid;
       position: absolute;
       top: 75px;
+      display: grid;
       grid-auto-columns: 80px;
     }
 
@@ -40,7 +40,6 @@
       margin: 5px;
       border: 1px solid green;
       padding: 5px;
-      z-index: -1;
     }
 
     .reservation {
@@ -54,16 +53,39 @@
 
     }
 
-    .num {
-      margin-right: 20px;
-      text-align: right;
-      padding-right: 2px;
-      background-color: white;
+    .roomNum {
+
     }
 
-    ul {
-      list-style-type: none;
+    .numText {
+      background-color: white;
+      position: fixed;
+      height: 100%;
+      z-index: 2;
     }
+
+    .arrow-left {
+      width: 0px;
+      height: 0px;
+      justify-self: start;
+      align-self: center;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-right: 15px solid blue;
+      z-index: 1;
+    }
+
+    .arrow-right {
+      width: 0px;
+      height: 0px;
+      justify-self: end;
+      align-self: center;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 15px solid blue;
+      z-index: 1;
+    }
+
   </style>
 
   <title>MLC Dorm Reservation</title>
@@ -73,9 +95,8 @@
 <body>
 
   <nav id="title" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <h1 class="navbar-brand" href="#">MLC Dorm Reservation Calendar</h1>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav mr-auto">
+      <h1 class="navbar-brand" href="#">MLC Dorm Reservation Calendar</h1>
+      <ul class="navbar-nav mr-auto justify-content-start">
         <li class="nav-item active">
           <h1 class="navbar-brand" id="month"><span class="sr-only">(current)</span></h1>
         </li>
@@ -88,7 +109,7 @@
             Pick Building
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" id="CO">Concord</a>
+            <a class="dropdown-item" id="CD">Concord</a>
             <a class="dropdown-item" id="AU">Augustana</a>
             <a class="dropdown-item" id="CE">Centennial</a>
             <a class="dropdown-item" id="SU">Summit</a>
@@ -106,54 +127,57 @@
             <a class="dropdown-item" id="only">Only</a>
           </div>
         </li>
-      </ul>
+        <li>
       <div class="form-inline">
         <input id="searchText" class="form-control mr-sm-2" placeholder="Room # or Name" aria-label="Search">
         <button id="searchButton" class="btn btn-outline-success">Find</button>
       </div>
-      <div class="form-inline">
-          <div class="form-group col-md-5">
-            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"
-              placeholder="Start date" />
-              <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
+    </li>
+  </ul>
+      <ul class="navbar-nav ml-auto justify-content-end">
+        <li>
+          <div class="form-inline">
+            <div class="form-group col-md-4">
+              <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"
+                  placeholder="Start date" />
+                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                  <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group col-md-4">
+              <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2"
+                  placeholder="End date" />
+                <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                  <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="form-group col-md-5">
-            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
-              <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2"
-              placeholder="End date"/>
-              <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
-                <div class="input-group-text"><span class="oi oi-calendar" title="calendar" aria-hidden="true"></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <script type="text/javascript">
+          <script type="text/javascript">
 
-        $(function () {
-          $('#datetimepicker1').datetimepicker();
-          $('#datetimepicker2').datetimepicker({
-            useCurrent: false
-          });
-          $("#datetimepicker1").on("change.datetimepicker", function (e) {
-            $('#datetimepicker2').datetimepicker('minDate', e.date);
-          });
-          $("#datetimepicker2").on("change.datetimepicker", function (e) {
-            $('#datetimepicker1').datetimepicker('maxDate', e.date);
-          });
-        });
-      </script>
-      <ul class="navbar-nav ml-auto">
+            $(function () {
+              $('#datetimepicker1').datetimepicker();
+              $('#datetimepicker2').datetimepicker({
+                useCurrent: false
+              });
+              $("#datetimepicker1").on("change.datetimepicker", function (e) {
+                $('#datetimepicker2').datetimepicker('minDate', e.date);
+              });
+              $("#datetimepicker2").on("change.datetimepicker", function (e) {
+                $('#datetimepicker1').datetimepicker('maxDate', e.date);
+              });
+            });
+          </script>
+        </li>
         <li class="nav-item">
           <button id="reset" class="btn btn-outline-dark">Reset</button>
         </li>
       </ul>
-    </div>
   </nav>
 
   <div class="grid_box">
