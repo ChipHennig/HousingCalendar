@@ -70,19 +70,21 @@ var reservations = [
 /**
   Creates a room container for every room listed and labels it
   Organizes each room's Res_Group into rows of reservations
+  @param {Room[]} rooms - Array of room objects with room attributes
+  @param {$(string)} grid - jQuery element in which to place the rooms in
 **/
-function createRooms(rooms) {
+function createRooms(rooms, grid) {
   $.each(rooms, function (idx, obj) {
     var gridIndex = idx + 2;
     var nextIndex = gridIndex + 1;
 
     var numDiv = $('<div class="roomNum container card border-secondary" id="' + obj.Room_ID + '" style="grid-column: 1; grid-row: ' +
       gridIndex + ' / ' + nextIndex + ';"><div class="numText fixed-left">' + obj.Room_Number + '</div></div>');
-    $(".grid_box").append(numDiv);
+    grid.append(numDiv);
 
     var roomDiv = $('<div class="room card border-success" id="room' + obj.Room_ID + '" style="grid-column: 2; grid-row: ' +
       gridIndex + ' / ' + nextIndex + ';"></div>');
-    $(".grid_box").append(roomDiv);
+    grid.append(roomDiv);
 
     // Organizes each room's reservations
     // into rows using a room's Res_Group
@@ -121,6 +123,8 @@ function createRooms(rooms) {
 
 /**
   Calculates the youngest and oldest start/end dates
+  @param {Reservation[]} reservations - Array of res objects with res attributes
+  @return {string[]} - The smallest and greatest date values
 **/
 function calculateEnds(reservations) {
   var smallestDate;
@@ -147,8 +151,12 @@ function calculateEnds(reservations) {
 
 /**
   Writes a label for every day that a resident is in a room
+  @param {string} smallestDate - The smallest date value to display
+  @param {string} greatestDate - The greatest date value to display
+  @param {$(string)} grid - jQuery element in which to place the rooms in
+  @return {number} - The last column a dateDiv is in
 **/
-function createDates(smallestDate, greatestDate) {
+function createDates(smallestDate, greatestDate, grid) {
   var smallestDate = moment(smallestDate);
   var greatestDate = moment(greatestDate);
 
@@ -157,20 +165,18 @@ function createDates(smallestDate, greatestDate) {
   range = moment.range(smallestDate, greatestDate);
   dates = Array.from(range.by('days')).map(m => m.format("YYYY-MM-DD"));
   days = Array.from(range.by('days')).map(m => m.format("DD"));
-  $("#month").text(smallestDate.format("MMMM"));
-  $("#year").text(smallestDate.format("YYYY"));
 
   $.each(dates, function (idx, obj) {
     var gridIndex = idx + 2;
     var day = days[idx];
     var dateDiv = dateDiv = $('<div class="dateDiv card border-secondary" id="' + obj + '" style="grid-column:' +
-      gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
+      gridIndex + '; grid-row: 1;">' + day + '</div>');
     if (day === "01") {
       day = dates[idx].substring(5, 7) + "-" + day;
       dateDiv = $('<div class="dateDiv firstDays card border-secondary" id="' + obj + '" style="grid-column:' +
-        gridIndex + '; grid-row: 1; justify-self: center;">' + day + '</div>');
+        gridIndex + '; grid-row: 1;">' + day + '</div>');
     }
-    $(".grid_box").append(dateDiv);
+    grid.append(dateDiv);
   });
 
   // Ends room rows at the last reservation date
@@ -179,11 +185,13 @@ function createDates(smallestDate, greatestDate) {
   return lastColumn;
 };
 
-/*
-Creates reservation divs
-and places them in their corresponding
-row and columns
-*/
+/**
+  Creates reservation divs
+  and places them in their corresponding
+  row and columns
+  @param {Room[]} rooms - Array of room objects with room attributes
+  @param {number} lastColumn - The last column a dateDiv is in
+**/
 function createRes(rooms, lastColumn) {
   $.each(rooms, function (idx, obj) {
     for (var i = 0; i < obj.Res_Group.length; i++) {
@@ -203,14 +211,16 @@ function createRes(rooms, lastColumn) {
         // or end date is beyond the time constraint
         if (currentRes.isBefore) {
           var triEnd = startCol + 1;
-          var leftTriangle = $('<div class="arrow-left" style="grid-column: ' + startCol + ' / ' +
+          var leftTriangle = $('<div class="arrow-left" data-toggle="tooltip" data-placement="auto"' +
+          'title="Starts before" style="grid-column: ' + startCol + ' / ' +
             triEnd + '; grid-row: ' + row + ';"></div>');
           $("#room" + currentRes.Room_ID).append(leftTriangle);
           $("#res" + currentRes.Person_ID).css("left", "15px");
           $("#res" + currentRes.Person_ID).css("width", "-=15");
         } else if (currentRes.isAfter) {
           var triStart = endCol - 1;
-          var rightTriangle = $('<div class="arrow-right" style="grid-column: ' + triStart + ' / ' +
+          var rightTriangle = $('<div class="arrow-right" data-toggle="tooltip" data-placement="auto"' +
+          'title="Ends after" style="grid-column: ' + triStart + ' / ' +
             endCol + '; grid-row: ' + row + ';"></div>');
           $("#room" + currentRes.Room_ID).append(rightTriangle);
           $("#res" + currentRes.Person_ID).css("width", "-=15");
@@ -222,17 +232,32 @@ function createRes(rooms, lastColumn) {
   });
 };
 
-/*
+/**
   Build Calendar
-*/
+**/
 $(function () {
+  createRooms(rooms, $(".grid_box"));
+  var dateEnds = calculateEnds(reservations);
+  var lastColumn = createDates(dateEnds[0], dateEnds[1], $(".grid_box"));
+  createRes(rooms, lastColumn);
+
   $(window).scroll(function(event) {
     var leftPx = $(window).scrollLeft();
+    console.log(leftPx);
     $(".roomNum").css("left", leftPx);
-  });
 
-  createRooms(rooms);
-  var dateEnds = calculateEnds(reservations);
-  var lastColumn = createDates(dateEnds[0], dateEnds[1]);
-  createRes(rooms, lastColumn);
+    var topPx = $(window).scrollTop();
+    $(".dateDiv").css("top", topPx);
+
+    /*
+    $.each(reservations, function(idx, obj) {
+      var res = $("#res" + obj.Person_ID);
+      if(res.position().left <= leftPx) {
+        res.css("left", leftPx);
+      }
+    });
+    */
+
+
+  });
 });
