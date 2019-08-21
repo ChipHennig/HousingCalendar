@@ -68,60 +68,73 @@ var reservations = [
 ];
 
 /**
+  createRooms Func
+
   Creates a room container for every room listed and labels it
   Organizes each room's Res_Group into rows of reservations
   @param {Room[]} rooms - Array of room objects with room attributes
-  @param {$(string)} grid - jQuery element in which to place the rooms in
+  @param {Reservation[]} reservations - Array of res objects with res attributes
+  @param {$(string)} grid - jQuery element to place the rooms in
 **/
-function createRooms(rooms, grid) {
-  $.each(rooms, function (idx, obj) {
+function createRooms(rooms, reservations, grid) {
+  $.each(rooms, function (idx, room) {
     var gridIndex = idx + 2;
     var nextIndex = gridIndex + 1;
-
-    var numDiv = $('<div class="roomNum container card border-secondary" id="' + obj.Room_ID + '" style="grid-column: 1; grid-row: ' +
-      gridIndex + ' / ' + nextIndex + ';"><div class="numText fixed-left">' + obj.Room_Number + '</div></div>');
+    var numDiv = $('<div class="roomNum container card border-secondary" id="' + room.Room_ID + '" style="grid-column: 1; grid-row: ' +
+      gridIndex + ' / ' + nextIndex + ';"><div class="numText">' + room.Room_Number + '</div></div>');
     grid.append(numDiv);
-
-    var roomDiv = $('<div class="room card border-success" id="room' + obj.Room_ID + '" style="grid-column: 2; grid-row: ' +
+    var roomDiv = $('<div class="room card border-success" id="room' + room.Room_ID + '" style="grid-column: 2; grid-row: ' +
       gridIndex + ' / ' + nextIndex + ';"></div>');
     grid.append(roomDiv);
 
-    // Organizes each room's reservations
-    // into rows using a room's Res_Group
-    $.each(reservations, function (idx2, obj2) {
-      if (obj.Room_ID === obj2.Room_ID) {
-        var placed = false;
-        var index = 0;
-        while (!placed) {
-          if (obj.Res_Group[index] === undefined) {
-            obj.Res_Group[index] = [];
-            obj.Res_Group[index].push(obj2);
-            placed = true;
-          } else {
-            var isSpace = true;
-            var oneStart = moment(obj2.Reservation_Start);
-            var oneEnd = moment(obj2.Reservation_End);
-            for (var i = 0; i < obj.Res_Group[index].length; i++) {
-              var twoStart = moment(obj.Res_Group[index][i].Reservation_Start);
-              var twoEnd = moment(obj.Res_Group[index][i].Reservation_End);
-              if (!(oneEnd.isBefore(twoStart) || oneStart.isAfter(twoEnd))) {
-                isSpace = false;
-              }
-            }
-            if (!isSpace) {
-              index++;
-            } else {
-              obj.Res_Group[index].push(obj2);
-              placed = true;
-            }
-          }
-        }
-      }
-    });
+    sortReservations(idx, room);
   });
 };
 
 /**
+  sortReservations Func
+
+  Organizes each room's reservations
+  into rows using the room's Res_Group
+  @param {number} idx - Index of room
+  @param {Room} room - Room object
+**/
+function sortReservations(idx, room) {
+  $.each(reservations, function (idx2, res) {
+    if (room.Room_ID === res.Room_ID) {
+      var placed = false;
+      var index = 0;
+      while (!placed) {
+        if (room.Res_Group[index] === undefined) {
+          room.Res_Group[index] = [];
+          room.Res_Group[index].push(res);
+          placed = true;
+        } else {
+          var isSpace = true;
+          var oneStart = moment(res.Reservation_Start);
+          var oneEnd = moment(res.Reservation_End);
+          for (var i = 0; i < room.Res_Group[index].length; i++) {
+            var twoStart = moment(room.Res_Group[index][i].Reservation_Start);
+            var twoEnd = moment(room.Res_Group[index][i].Reservation_End);
+            if (!(oneEnd.isBefore(twoStart) || oneStart.isAfter(twoEnd))) {
+              isSpace = false;
+            }
+          }
+          if (!isSpace) {
+            index++;
+          } else {
+            room.Res_Group[index].push(res);
+            placed = true;
+          }
+        }
+      }
+    }
+  });
+}
+
+/**
+  calculateEnds Func
+
   Calculates the youngest and oldest start/end dates
   @param {Reservation[]} reservations - Array of res objects with res attributes
   @return {string[]} - The smallest and greatest date values
@@ -129,16 +142,15 @@ function createRooms(rooms, grid) {
 function calculateEnds(reservations) {
   var smallestDate;
   var greatestDate;
-
-  $.each(reservations, function (idx, obj) {
+  $.each(reservations, function (idx, res) {
     // Calculates the oldest and youngest dates of residents
-    var startDate = obj.Reservation_Start;
+    var startDate = res.Reservation_Start;
     if (idx === 0) {
       smallestDate = startDate;
     } else if (startDate < smallestDate) {
       smallestDate = startDate;
     }
-    var endDate = obj.Reservation_End;
+    var endDate = res.Reservation_End;
     if (idx === 0) {
       greatestDate = endDate
     } else if (endDate > greatestDate) {
@@ -150,6 +162,8 @@ function calculateEnds(reservations) {
 };
 
 /**
+  createDates Func
+
   Writes a label for every day that a resident is in a room
   @param {string} smallestDate - The smallest date value to display
   @param {string} greatestDate - The greatest date value to display
@@ -159,13 +173,11 @@ function calculateEnds(reservations) {
 function createDates(smallestDate, greatestDate, grid) {
   var smallestDate = moment(smallestDate);
   var greatestDate = moment(greatestDate);
-
   // Converts the oldest/youngest dates into an Array
   // of every day in between them
   range = moment.range(smallestDate, greatestDate);
   dates = Array.from(range.by('days')).map(m => m.format("YYYY-MM-DD"));
   days = Array.from(range.by('days')).map(m => m.format("DD"));
-
   $.each(dates, function (idx, obj) {
     var gridIndex = idx + 2;
     var day = days[idx];
@@ -178,77 +190,145 @@ function createDates(smallestDate, greatestDate, grid) {
     }
     grid.append(dateDiv);
   });
-
   // Ends room rows at the last reservation date
   var lastColumn = dates.length + 2;
   $(".room").css("grid-column", '2 / ' + lastColumn + '');
+
   return lastColumn;
 };
 
 /**
+  createRes Func
+
   Creates reservation divs
   and places them in their corresponding
   row and columns
   @param {Room[]} rooms - Array of room objects with room attributes
   @param {number} lastColumn - The last column a dateDiv is in
+  @param {number} triangleWidth - Triangle width
 **/
-function createRes(rooms, lastColumn) {
-  $.each(rooms, function (idx, obj) {
-    for (var i = 0; i < obj.Res_Group.length; i++) {
-      for (var j = 0; j < obj.Res_Group[i].length; j++) {
-        var currentRes = obj.Res_Group[i][j];
+function createRes(rooms, lastColumn, triangleWidth) {
+  $.each(rooms, function (idx, room) {
+    for (var i = 0; i < room.Res_Group.length; i++) {
+      for (var j = 0; j < room.Res_Group[i].length; j++) {
+        var currentRes = room.Res_Group[i][j];
         var startCol = parseInt($("#" + currentRes.Reservation_Start).css("grid-column-start")) - 1;
         var endCol = parseInt($("#" + currentRes.Reservation_End).css("grid-column-start"));
         var row = i + 1;
         var resDiv = $('<div class="reservation card badge-primary" id="res' + currentRes.Person_ID +
           '" data-toggle="tooltip" data-placement="auto" title="' + currentRes.Person_Name +
-          '" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: ' + row + ';">' +
-          currentRes.Person_Name + '</div>');
-
+          '" style="grid-column: ' + startCol + ' / ' + endCol + '; grid-row: ' +
+          row + '; height: ' + (triangleWidth * 2) + 'px;">' + currentRes.Person_Name + '</div>');
         $("#room" + currentRes.Room_ID).append(resDiv);
-
-        // Append triangles to the reservation if the start
-        // or end date is beyond the time constraint
-        if (currentRes.isBefore) {
-          var triEnd = startCol + 1;
-          var leftTriangle = $('<div class="arrow-left" data-toggle="tooltip" data-placement="auto"' +
-          'title="Starts before" style="grid-column: ' + startCol + ' / ' +
-            triEnd + '; grid-row: ' + row + ';"></div>');
-          $("#room" + currentRes.Room_ID).append(leftTriangle);
-          $("#res" + currentRes.Person_ID).css("left", "15px");
-          $("#res" + currentRes.Person_ID).css("width", "-=15");
-        } else if (currentRes.isAfter) {
-          var triStart = endCol - 1;
-          var rightTriangle = $('<div class="arrow-right" data-toggle="tooltip" data-placement="auto"' +
-          'title="Ends after" style="grid-column: ' + triStart + ' / ' +
-            endCol + '; grid-row: ' + row + ';"></div>');
-          $("#room" + currentRes.Room_ID).append(rightTriangle);
-          $("#res" + currentRes.Person_ID).css("width", "-=15");
-        } else if ((endCol + 1) === lastColumn) {
-          $("#res" + currentRes.Person_ID).css("width", "-=15");
+        if(currentRes.isBefore || currentRes.isAfter) {
+          createTriangles(currentRes, triangleWidth, startCol, endCol, row);
         }
       }
     }
   });
+
+  triangleBorders(triangleWidth);
 };
 
 /**
+  createTriangles Func
+
+  Append triangles to the reservation if the start
+  or end date is beyond the time constraint
+  @param {Reservation} currentRes - Reservation object
+  @param {number} triangleWidth - Triangle width
+  @param {number} startCol - First grid column
+  @param {number} endCol - Last grid column
+  @param {number} row - Current row
+**/
+function createTriangles(currentRes, triangleWidth, startCol, endCol, row) {
+  if (currentRes.isBefore) {
+    var triEnd = startCol + 1;
+    var leftTriangle = $('<div class="arrow-left" data-toggle="tooltip" data-placement="auto"' +
+    'title="Starts before" style="grid-column: ' + startCol + ' / ' +
+      triEnd + '; grid-row: ' + row + ';"></div>');
+    $("#room" + currentRes.Room_ID).append(leftTriangle);
+    $("#res" + currentRes.Person_ID).css("left", triangleWidth);
+    $("#res" + currentRes.Person_ID).css("width", "-=" + triangleWidth);
+  } else if (currentRes.isAfter) {
+    var triStart = endCol - 1;
+    var rightTriangle = $('<div class="arrow-right" data-toggle="tooltip" data-placement="auto"' +
+    'title="Ends after" style="grid-column: ' + triStart + ' / ' +
+      endCol + '; grid-row: ' + row + ';"></div>');
+    $("#room" + currentRes.Room_ID).append(rightTriangle);
+    $("#res" + currentRes.Person_ID).css("width", "-=" + triangleWidth);
+  } else if ((endCol + 1) === lastColumn) {
+    $("#res" + currentRes.Person_ID).css("width", "-=" + triangleWidth);
+  }
+}
+
+/**
+  triangleBorders Func
+
+  Edits the dimensions of the arrow classes
+  to make the triangle divs proportional
+  @param {number} triangleWidth - Triangle width
+**/
+function triangleBorders(triangleWidth) {
+  var borders = ["border-right", "border-left", "border-top", "border-bottom"];
+  $.each(borders, function(idx, border) {
+    if(idx === 0) {
+      $(".arrow-left").css(border, triangleWidth + "px solid blue");
+    } else if(idx != 1) {
+      $(".arrow-left").css(border, triangleWidth + "px solid transparent");
+    }
+    if(idx === 1) {
+      $(".arrow-right").css(border, triangleWidth + "px solid blue");
+    } else if(idx != 0) {
+      $(".arrow-right").css(border, triangleWidth + "px solid transparent");
+    }
+  });
+}
+
+/**
+  setSizes Func
+
+  Sets the size styles of elements
+  based on the editor's preference
+  @param {$(string)} windowObj - The element that will contain the calendar
+  @param {number} columns - The number of column to include in the window
+  @param {$(string)} grid - jQuery element in which to place the rooms in
+  @return {number} - Triangle width
+**/
+function setSizes(windowObj, columns, grid) {
+  var columnWidth = windowObj.width() / columns;
+  var reservationHeight = columnWidth * (3 / 8);
+  var triangleWidth = reservationHeight / 2;
+  grid.css("grid-auto-columns", columnWidth);
+  $(".room").css("grid-auto-columns", columnWidth);
+  $(".dateDiv").css("width", columnWidth);
+
+  return triangleWidth;
+}
+
+/**
   Build Calendar
+
+  Calls all necessary functions to
+  build the HTML Housing Calendar
 **/
 $(function () {
-  createRooms(rooms, $(".grid_box"));
+  var grid = $(".grid_box");
+  var windowObj = $(window);
+
+  createRooms(rooms, reservations, grid);
   var dateEnds = calculateEnds(reservations);
-  var lastColumn = createDates(dateEnds[0], dateEnds[1], $(".grid_box"));
-  createRes(rooms, lastColumn);
+  var lastColumn = createDates(dateEnds[0], dateEnds[1], grid);
+  var triangleWidth = setSizes(windowObj, 20, grid);
+  createRes(rooms, lastColumn, triangleWidth);
 
-  $(window).scroll(function(event) {
-    var leftPx = $(window).scrollLeft();
-    console.log(leftPx);
+  windowObj.scroll(function(event) {
+    var leftPx = windowObj.scrollLeft();
     $(".roomNum").css("left", leftPx);
-
-    var topPx = $(window).scrollTop();
+    var topPx = windowObj.scrollTop();
     $(".dateDiv").css("top", topPx);
 
+    // Implement scrolling of names on reservation elements?
     /*
     $.each(reservations, function(idx, obj) {
       var res = $("#res" + obj.Person_ID);
@@ -257,7 +337,5 @@ $(function () {
       }
     });
     */
-
-
   });
 });
