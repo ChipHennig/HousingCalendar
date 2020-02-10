@@ -1,6 +1,6 @@
 # HousingCalendar
 WebApp to display residents living in a dorm at a specific time range.
-\nMost recent version can be opened from just_grid.html file.
+Most recent version can be opened from just_grid.html file.
 
 ### Useful links
 1. Bootstrap: https://getbootstrap.com/docs/4.3/getting-started/introduction/
